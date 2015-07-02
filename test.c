@@ -50,5 +50,9 @@ int main(int argc, char **argv) {
     printf("Removed");
     match_database_dump(db); 
 
+    match_database_remove_file(db, "/usr/lib/debug/usr/lib/x86_64-linux-gnu/test.casdf");
+    printf("Non Removed");
+    match_database_dump(db); 
+
     return 0;
 }
