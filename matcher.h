@@ -22,6 +22,7 @@ void match_database_add_file(FileDatabase *db, char *filename);
 int match_database_add_dir(FileDatabase *db, char *dir);
 void match_database_remove_file(FileDatabase *db, char *filename);
 void match_database_dump(FileDatabase *db);
+int match_database_match_files(FileDatabase *db, char* pattern, char **matched_filenames, int match_limit);
 
 
 /* match filename with pattern, return 1 on success, and return 0 on failure */

@@ -73,6 +73,25 @@ int match_database_add_dir(FileDatabase *db, char *dir) {
     return n;
 }
 
+
+int match_database_match_files(FileDatabase *db, char* pattern, char **matched_filenames, int match_limit) {
+    FileDatabaseEntry *node;
+    int matched = 0;
+    char **pt = matched_filenames;
+    for (node = db->entry; node != NULL; node = node->next) {
+        if (MATCH_HIT == match_filename(node->filename, pattern)) {
+            char * result_filename = strdup(node->filename);
+            matched_filenames[matched] = result_filename;
+            matched = matched + 1;
+            if (matched >= match_limit) {
+                break;
+            }
+        }
+    }
+    return matched;
+}
+
+
 void match_database_dump(FileDatabase *db) {
     FileDatabaseEntry *node;
 
