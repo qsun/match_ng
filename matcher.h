@@ -19,6 +19,7 @@ typedef struct FileDatabase {
 
 FileDatabase *match_database_init();
 void match_database_add_file(FileDatabase *db, char *filename);
+int match_database_add_dir(FileDatabase *db, char *dir);
 void match_database_remove_file(FileDatabase *db, char *filename);
 void match_database_dump(FileDatabase *db);
 
