@@ -39,11 +39,15 @@ int match_database_add_dir(FileDatabase *db, char *dir) {
     // printf("Processing: %s\n", dir);
     DIR *root;
     int n = 0;
-    char* fullpath = malloc(sizeof(char) * 255);
+    char* fullpath = malloc(sizeof(char) * 1024);
+    char **pending_dirs = malloc(sizeof(char *) * 1024); /* at most 1024 subdir */
+    int pending_dir_count = 0;
 
     root = opendir(dir);
     if (NULL == root) {
-        perror("Can't open dir");
+        char error_message[1024];
+        sprintf(error_message, "Can't open dir [%s]", dir);
+        perror(error_message);
         return -1;
     }
 
@@ -51,7 +55,7 @@ int match_database_add_dir(FileDatabase *db, char *dir) {
     while (NULL != (entry = readdir(root))) {
         if (entry->d_type == DT_REG) {
             n++;
-            snprintf(fullpath, 255, "%s/%s", dir, entry->d_name);
+            snprintf(fullpath, 1024, "%s/%s", dir, entry->d_name);
             match_database_add_file(db, fullpath);
         }
 
@@ -59,16 +63,23 @@ int match_database_add_dir(FileDatabase *db, char *dir) {
             if ((0 == strcmp(entry->d_name, ".")) || (0 == strcmp(entry->d_name, ".."))) {
                 // pass
             } else {
-                snprintf(fullpath, 255, "%s/%s", dir, entry->d_name);
-                int result = match_database_add_dir(db, fullpath);
-                if (result > 0) {
-                    n = n + result;
-                }
+                snprintf(fullpath, 1024, "%s/%s", dir, entry->d_name);
+                pending_dirs[pending_dir_count] = strdup(fullpath);
+                pending_dir_count++;
             }
         }
     }
 
     closedir(root);
+
+    while (pending_dir_count > 0) {
+        int result = match_database_add_dir(db, pending_dirs[pending_dir_count-1]);
+        if (result > 0) {
+            n = n + result;
+        }
+
+        pending_dir_count--;
+    }
 
     return n;
 }
