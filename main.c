@@ -40,7 +40,7 @@ int main(int argc, char**argv) {
     int imported = match_database_add_dir(db, dir);
     printf("Imported: %d\n", imported);
 
-    match_database_dump(db);
+    // match_database_dump(db);
     
     if (pattern != NULL) {
         char **matched = malloc(10 * sizeof(char *));
